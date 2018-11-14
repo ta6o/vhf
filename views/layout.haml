@@ -120,7 +120,8 @@
           .nav-wrapper
             %h5{:style=>"color:white !important"} &nbsp;
 
-    %main{:style=>"display:none;"}
+    %main
+      =yield
     #modal.modal
       .modal-content
 
