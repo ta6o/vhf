@@ -21,9 +21,16 @@ $.each($data, function(i,e) {
 var tx, tl, st;
 $("#chart").on("click","rect.interval",function(){
 	console.log($(this).data("fn"))
-	tx = new Audio("/txs/"+$(this).data("fn"));
-  tx.volume = 1;
-	tx.play();
+
+  if (typeof tx != "undefined") {
+    tx.src = "/txs/"+$(this).data("fn");
+    tx.currentTime = 0;
+    tx.play();
+  } else {
+    tx = new Audio("/txs/"+$(this).data("fn"));
+    tx.volume = 1;
+    tx.play();
+  }
 })
 
 function setst(e) {st = e}
@@ -38,10 +45,6 @@ function reset() {
 	$("#chart").html("");
 	$("#chart").css("height", 0);
 	$("#chart").css("height", $("main").height() - 12);
-  if (typeof tx != "undefined") {
-    tx.pause;
-    tx.currentTime = 0;
-  }
 	tl = new TimelineChart($("#chart")[0], recordings, {
 		enableLiveTimer: true,
 		timerTickInterval: 1000,
