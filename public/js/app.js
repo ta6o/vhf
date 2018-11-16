@@ -68,8 +68,8 @@ $.each($data, function(i,e) {
       d.data.push({
         label: "",
         type: TimelineChart.TYPE.INTERVAL,
-        from: new Date(ee.t),
-        to: new Date(ee.t + ee.d),
+        from: new Date(ee.t*1000),
+        to: new Date(ee.t*1000 + ee.d),
         fn: e.label + "_" + String(ee.t) + ".wav"
       });
     });

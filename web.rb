@@ -33,16 +33,16 @@ end
 
 def parse_recordings
   l = `ls -lA public/txs/ | wc -l`.strip
-  Dir.foreach("./public/txs").each_with_index do |fn,i|
+  Dir.foreach("./public/txs").sort.each_with_index do |fn,i|
     print "Parsing #{i} / #{l}\r"
     next unless fn.match /^\d+\.\d+_\d{10}.wav$/
     f = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3).to_s.ljust(7,"0")
     $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
     ts = fn.match(/_\d{10}\./)[0][1..-2].to_i
     next if $data[f]["ts"].include?(ts)
+    $data[f]["ts"] << ts
     t = Time.at(ts).to_s
     d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
-    $data[f]["ts"] << ts
     next if d < 400
     $data[f]["data"] << { "d" => d, "t" => ts }
   end
