@@ -38,6 +38,10 @@ function reset() {
 	$("#chart").html("");
 	$("#chart").css("height", 0);
 	$("#chart").css("height", $("main").height() - 12);
+  if (typeof tx != "undefined") {
+    tx.pause;
+    tx.currentTime = 0;
+  }
 	tl = new TimelineChart($("#chart")[0], recordings, {
 		enableLiveTimer: true,
 		timerTickInterval: 1000,
