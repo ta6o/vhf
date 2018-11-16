@@ -38,14 +38,11 @@ def parse_recordings
     next unless fn.match /^\d+\.\d+_\d{10}.wav$/
     f = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3).to_s.ljust(7,"0")
     $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
-    begin
-      ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
-    rescue
-      ts = fn.match(/_\d{10}\./)[0][1..-2].to_i * 1000
-    end
+    p fn
+    ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
     next if $data[f]["ts"].include?(ts)
     $data[f]["ts"] << ts
-    t = Time.at(ts).to_s
+    # t = Time.at(ts).to_s
     d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
     next if d < 400
     $data[f]["data"] << { "d" => d, "t" => ts }
