@@ -21,7 +21,7 @@ $.each($data, function(i,e) {
 var tx, tl, st;
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
-var context = new AudioContext(gain:6);
+var context = new AudioContext({gain:6});
 
 function playSound(buffer) {
   var source = context.createBufferSource(); // creates a sound source
