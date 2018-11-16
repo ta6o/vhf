@@ -19,10 +19,23 @@ $.each($data, function(i,e) {
 
 
 var tx, tl, st;
+
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+var context = new AudioContext(gain:6);
+
+function playSound(buffer) {
+  var source = context.createBufferSource(); // creates a sound source
+  source.buffer = buffer;                    // tell the source which sound to play
+  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+  source.start(0);                           // play the source now
+}
+
 $("#chart").on("click","rect.interval",function(){
 	console.log($(this).data("fn"))
 
-  if (typeof tx != "undefined") {
+	playSound("/txs/"+$(this).data("fn");
+
+  /*if (typeof tx != "undefined") {
     tx.src = "/txs/"+$(this).data("fn");
     tx.currentTime = 0;
     tx.play();
@@ -30,7 +43,7 @@ $("#chart").on("click","rect.interval",function(){
     tx = new Audio("/txs/"+$(this).data("fn"));
     tx.volume = 1;
     tx.play();
-  }
+  }*/
 })
 
 function setst(e) {st = e}
