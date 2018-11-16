@@ -21,12 +21,15 @@ $.each($data, function(i,e) {
 var tx, tl, st;
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
-var context = new AudioContext({gain:6});
+var context = new AudioContext();
+var gainNode = context.createGain();
+gainNode.gain.value = 2; // double the volume
 
 function playSound(buffer) {
   var source = context.createBufferSource(); // creates a sound source
   source.buffer = buffer;                    // tell the source which sound to play
-  source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+  source.connect(gainNode);       // connect the source to the context's destination (the speakers)
+  gainNode.connect(context.destination);       // connect the source to the context's destination (the speakers)
   source.start(0);                           // play the source now
 }
 
