@@ -36,7 +36,7 @@ function playSound(buffer) {
 $("#chart").on("click","rect.interval",function(){
 	console.log($(this).data("fn"))
 
-	playSound("/txs/"+$(this).data("fn");
+	playSound("/txs/"+$(this).data("fn"));
 
   /*if (typeof tx != "undefined") {
     tx.src = "/txs/"+$(this).data("fn");
