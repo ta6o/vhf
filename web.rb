@@ -38,7 +38,11 @@ def parse_recordings
     next unless fn.match /^\d+\.\d+_\d{10}.wav$/
     f = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3).to_s.ljust(7,"0")
     $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
-    ts = fn.match(/_\d{10}\./)[0][1..-2].to_i
+    begin
+      ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
+    rescue
+      ts = fn.match(/_\d{10}\./)[0][1..-2].to_i * 1000
+    end
     next if $data[f]["ts"].include?(ts)
     $data[f]["ts"] << ts
     t = Time.at(ts).to_s

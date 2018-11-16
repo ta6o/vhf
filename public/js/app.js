@@ -1,64 +1,3 @@
-
-data = [{
-		label: 'Name',
-		data: [{
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 1, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 2, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 3, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 4, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 5, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 6, 1])
-		}]
-}, {
-		label: 'Type',
-		data: [{
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 1, 11])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 1, 15])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 3, 10])
-		}, {
-				label: 'I\'m a label',
-				type: TimelineChart.TYPE.INTERVAL,
-				from: new Date([2015, 2, 1]),
-				to: new Date([2015, 3, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 6, 1])
-		}, {
-				type: TimelineChart.TYPE.POINT,
-				at: new Date([2015, 7, 1])
-		}]
-}, {
-		label: 'Imp',
-		data: [{
-				label: 'Label 1',
-				type: TimelineChart.TYPE.INTERVAL,
-				from: new Date([2015, 1, 15]),
-				to: new Date([2015, 3, 1])
-		}, {
-				label: 'Label 2',
-				type: TimelineChart.TYPE.INTERVAL,
-				from: new Date([2015, 4, 1]),
-				to: new Date([2015, 5, 12])
-		}]
-}];
-
-
 recordings = []
 
 $.each($data, function(i,e) {
@@ -68,8 +7,8 @@ $.each($data, function(i,e) {
       d.data.push({
         label: "",
         type: TimelineChart.TYPE.INTERVAL,
-        from: new Date(ee.t*1000),
-        to: new Date(ee.t*1000 + ee.d),
+        from: new Date(ee.t),
+        to: new Date(ee.t + ee.d),
         fn: e.label + "_" + String(ee.t) + ".wav"
       });
     });
@@ -79,12 +18,15 @@ $.each($data, function(i,e) {
 
 
 
-var tx, tl;
+var tx, tl, st;
 $("#chart").on("click","rect.interval",function(){
 	console.log($(this).data("fn"))
 	tx = new Audio("/txs/"+$(this).data("fn"));
+  tx.volume = 1;
 	tx.play();
 })
+
+function setst(e) {st = e}
 
 function pad(n, width, z) {
   z = z || '0';
@@ -99,8 +41,8 @@ function reset() {
 	tl = new TimelineChart($("#chart")[0], recordings, {
 		enableLiveTimer: true,
 		timerTickInterval: 1000,
-		hideGroupLabels: false
-	}).onVizChange(e => console.log(e));
+		hideGroupLabels: true
+  }).onVizChange(e => setst(e));
 }
 
 
