@@ -34,10 +34,11 @@ end
 def parse_recordings
   l = `ls -lA public/txs/ | wc -l`.strip
   Dir.foreach("./public/txs").sort.each_with_index do |fn,i|
-    puts "Parsing #{i} / #{l}\r"
+    print "Parsing #{i} / #{l}\r"
     next unless fn.match /^\d+\.\d+_\d{13}.wav$/
     fq = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3)
     p fq
+    next unless (fq * 1000) % 25 == 0
     next if fq > 162.5
     next if fq < 156
     f = fq.to_s.ljust(7,"0")
