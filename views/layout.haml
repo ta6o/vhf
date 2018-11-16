@@ -11,6 +11,8 @@
     / CSS
     -#%link{:href => "https://fonts.googleapis.com/icon?family=Material+Icons", :rel => "stylesheet"}/
     %link{:href => "/fonts/Material-Icons/material-icons.css", :rel => "stylesheet"}/
+    %link{:href => "/css/timeline-chart.css?#{rand(1024)}", :media => "screen,projection", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "/css/style-d3.css?#{rand(1024)}", :media => "screen,projection", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => "/css/main.css?#{rand(1024)}", :media => "screen,projection", :rel => "stylesheet", :type => "text/css"}/
     :css
       body {
@@ -56,48 +58,7 @@
       .svg {
         width: 100%;
         max-width: 100%;
-        height: 264px;
       }
-      #weather { text-align:center;}
-      #weather i { font-size: 32px;}
-      #weather span { font-size: 14px;}
-      #weather i.wi-wind { font-size: 42px; color:#aaa;}
-      li {
-        list-style-type: none;
-        padding: 0 12px;
-      }
-      .inline > * {
-        display:inline;
-      }
-      li.large > *:not(h4) {
-        font-size:24px;
-      }
-      li > small {
-        font-size: 16px !important;
-        color: #666;
-      }
-      table.full { width: 100%; max-width: 100%; }
-      table.full tbody { width: 100%; }
-      table.full tbody tr { width: 100%; }
-      table.inline tbody td > * { display: inline; }
-      .svgwrap {
-        max-width: 100%;
-        overflow-x: auto;
-        overflow-y: visible;
-        min-height: 280px;
-        margin-bottom:12px;
-      }
-      #gauge-container {
-      }
-      #weather .leftie { text-align: left; font-size:24px; }
-      #weather .attr { font-size:16px;color:#666; }
-      #weather .huge { font-size:48px; }
-      #weather .middle { font-size:20px;margin:0; }
-      #weather .temp { font-size:36px; }
-      #weather .midicon { font-size:18px; margin-right:4px; }
-      #weather .windicon { font-size:64px !important; }
-      #weather span.wind { font-size:24px; }
-
       .dropdown-content li > a, .dropdown-content li > span { color: #666; }
       .full { width: 100%; }
       input.select-dropdown, #period { margin-bottom: 10px !important; }
@@ -112,7 +73,7 @@
 
   %body
     %header
-      =Haml::Engine.new(IO.read("#{Dir.pwd}/views/sidenav.haml")).render
+      -#=Haml::Engine.new(IO.read("#{Dir.pwd}/views/sidenav.haml")).render
       .navbar-fixed
         %nav.top-nav
           %a.button-collapse.top-nav.full{"data-activates" => "nav-mobile", :href => "#"}
@@ -122,12 +83,17 @@
 
     %main
       =yield
+
     #modal.modal
       .modal-content
 
     :javascript
       var domain = "#{$domain}";
-    %script{:src => "/js/main.js?#{rand(1024)}"}
-    %script{:src => "/js/leaflet.graticule.js?#{rand(1024)}"}
-    %script{:src => "/js/svg.min.js?#{rand(1024)}"}
+    %script{:src => "/js/jquery-3.3.1.min.js?#{rand(1024)}", :type=>"text/javascript"}
+    -#%script{:src => "/js/jquery.skedTape.js?#{rand(1024)}", :type=>"text/javascript"}
+    %script{:src => "/js/materialize.min.js?#{rand(1024)}", :type=>"text/javascript"}
+    %script{:src => "/js/d3.min.js?#{rand(1024)}", :type=>"text/javascript"}
+    %script{:src => "/js/d3-tip.min.js?#{rand(1024)}", :type=>"text/javascript"}
+    %script{:src => "/js/timeline-chart.js?#{rand(1024)}", :type=>"text/javascript"}
     %script{:src => "/js/app.js?#{rand(1024)}", :type=>"text/javascript"}
+

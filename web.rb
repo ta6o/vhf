@@ -23,24 +23,31 @@ end
 
 
 # python2 ./ham2mon.py -w -m -f 156.7e6 -r 1e6 -n4 -t 10 -s -60 -g 14 -a "hackrf"
-$offset = 0.670
+$offset = 0
 
 begin
-  $data = JSON.parse(File.read("./data/data.json"))
+  $data = JSON.parse(File.read("./public/txs/data.json"))
 rescue
   $data = {}
 end
 
 def parse_recordings
-  Dir.foreach("./recording").each do |f|
-    next unless f.match /^\d+\.\d+_\d{10}.wav$/
-    next if $data.has_key?(f)
-    $data[f] = { 
-      :f => (f.match(/^\d+\.\d+/)[0].to_f - $offset).round(3),
-      :d => `soxi -D #{Dir.pwd}/recording/#{f}`.to_f * 2,
-      :t => Time.at(f.match(/_\d{10}\./)[0].to_i).to_s
-    }
+  l = `ls -lA public/txs/ | wc -l`.strip
+  Dir.foreach("./public/txs").each_with_index do |fn,i|
+    print "Parsing #{i} / #{l}\r"
+    next unless fn.match /^\d+\.\d+_\d{10}.wav$/
+    f = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3).to_s.ljust(7,"0")
+    $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
+    ts = fn.match(/_\d{10}\./)[0][1..-2].to_i
+    next if $data[f]["ts"].include?(ts)
+    t = Time.at(ts).to_s
+    d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
+    $data[f]["ts"] << ts
+    next if d < 400
+    $data[f]["data"] << { "d" => d, "t" => ts }
   end
-  File.open("./data/data.json","w") {|f| f << $data.to_json }
+  File.open("./public/txs/data.json","w") {|f| f << $data.to_json }
 end
+
+parse_recordings
 

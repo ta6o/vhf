@@ -7287,10 +7287,10 @@ input[type=range] + .thumb.active .value {
 .navbar-fixed {
   height: 48px !important; }
 
-@media only screen and (max-width: 992px) {
-  header, main, footer {
-    padding-left: 0; }
+header, main, footer {
+  padding-left: 0; }
 
+@media only screen and (max-width: 992px) {
   .nav-mobile .nav-wrapper {
     margin-left: 72px; }
 
@@ -7316,49 +7316,6 @@ input[type=range] + .thumb.active .value {
   .navbar-fixed {
     height: 48px; } }
 @media only screen and (max-width: 600px) {
-  #weather {
-    font-size: 16px !important; }
-
-  #weather i {
-    font-size: 20px !important; }
-
-  #weather span {
-    font-size: 10px !important; }
-
-  #weather i.wi-wind {
-    font-size: 32px !important; }
-
-  #weather .leftie {
-    text-align: center;
-    font-size: 14px; }
-
-  #weather .attr {
-    font-size: 12px;
-    color: #666; }
-
-  #weather .hr3 {
-    text-align: center; }
-
-  #weather .huge {
-    font-size: 42px !important; }
-
-  #weather .middle {
-    font-size: 14px;
-    margin: 0; }
-
-  #weather .temp {
-    font-size: 24px; }
-
-  #weather .midicon {
-    font-size: 12px;
-    margin-right: 4px; }
-
-  #weather i.wi-wind.windicon {
-    font-size: 52px !important; }
-
-  #weather span.wind {
-    font-size: 16px !important; }
-
   .hide-on-small {
     display: none; }
 
