@@ -34,12 +34,12 @@ end
 def parse_recordings
   l = `ls -lA public/txs/ | wc -l`.strip
   Dir.foreach("./public/txs").sort.each_with_index do |fn,i|
-    print "Parsing #{i} / #{l}\r"
-    next unless fn.match /^\d+\.\d+_\d{10}.wav$/
+    puts "Parsing #{i} / #{l}\r"
+    next unless fn.match /^\d+\.\d+_\d{13}.wav$/
     f = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3).to_s.ljust(7,"0")
     $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
-    p fn
     ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
+    puts ts
     next if $data[f]["ts"].include?(ts)
     $data[f]["ts"] << ts
     # t = Time.at(ts).to_s
