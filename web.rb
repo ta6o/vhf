@@ -23,7 +23,7 @@ end
 
 
 # python2 ./ham2mon.py -w -m -f 156.7e6 -r 1e6 -n4 -t 10 -s -60 -g 14 -a "hackrf"
-$offset = 670
+$offset = 0
 
 begin
   $data = JSON.parse(File.read("./public/txs/data.json"))
@@ -37,6 +37,7 @@ def parse_recordings
     puts "Parsing #{i} / #{l}\r"
     next unless fn.match /^\d+\.\d+_\d{13}.wav$/
     fq = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3)
+    p fq
     next if fq > 162.5
     next if fq < 156
     f = fq.to_s.ljust(7,"0")
