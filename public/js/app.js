@@ -25,12 +25,22 @@ var context = new AudioContext();
 var gainNode = context.createGain();
 gainNode.gain.value = 2; // double the volume
 
-function playSound(buffer) {
-  var source = context.createBufferSource(); // creates a sound source
-  source.buffer = buffer;                    // tell the source which sound to play
-  source.connect(gainNode);       // connect the source to the context's destination (the speakers)
-  gainNode.connect(context.destination);       // connect the source to the context's destination (the speakers)
-  source.start(0);                           // play the source now
+function playSound(url) {
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+
+  // Decode asynchronously
+  request.onload = function() {
+    context.decodeAudioData(request.response, function(buffer) {
+			var source = context.createBufferSource(); // creates a sound source
+			source.buffer = buffer;                    // tell the source which sound to play
+			source.connect(gainNode);       // connect the source to the context's destination (the speakers)
+			gainNode.connect(context.destination);       // connect the source to the context's destination (the speakers)
+			source.start(0);                           // play the source now
+    }, onError);
+  }
+  request.send();
 }
 
 $("#chart").on("click","rect.interval",function(){
