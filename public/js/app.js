@@ -66,6 +66,7 @@ $("#chart").on("click","rect.interval",function(){
   }*/
 })
 
+
 function setst(e) {st = e}
 
 function pad(n, width, z) {
