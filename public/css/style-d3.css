@@ -41,19 +41,18 @@ body > section {
 rect.interval {
     cursor: pointer;
     border-radius: 4px;
-    fill: black;
-    stroke: black;
+    fill: #2196f3;
+    stroke: #2196f3;
 }
 
 rect.interval:hover {
-    fill: #2196f3;
-    stroke: #0d47a1;
+    fill: #4fc3f7;
+    stroke: #0288d1;
 }
 
 rect.interval.play {
     fill: #4caf50;
-    stroke: #1b5e20;
-    width: 0;
+    stroke: #4caf50;
 }
 
 rect.labels {

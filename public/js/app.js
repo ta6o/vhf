@@ -1,5 +1,8 @@
 recordings = []
 
+navgrad = " background: #2196f3; background: -moz-linear-gradient(left, #2196f3 0%, #2196f3 50%, #4caf50 50%, #4caf50 100%); background: -webkit-linear-gradient(left, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); background: linear-gradient(to right, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2196f3', endColorstr='#4caf50',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
+navgrad = " background: #4caf50; background: -moz-linear-gradient(left, #4caf50 0%, #4caf50 50%, #2196f3 50%, #2196f3 100%); background: -webkit-linear-gradient(left, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); background: linear-gradient(to right, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4caf50', endColorstr='#2196f3',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
+
 $.each($data, function(i,e) {
   if (e.data.length > 0) {
     f = parseInt(parseFloat(e.label) * 1000)
@@ -31,6 +34,7 @@ $.each($data, function(i,e) {
 
 
 var tx, tl, sl;
+var ft = "";
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 var context = new AudioContext();
@@ -53,8 +57,14 @@ function playSound(url) {
 			source.connect(gainNode);
 			gainNode.connect(context.destination);
       source.onended = function() {
+        $("nav").prop("active",false);
+        $("nav").addClass("blue");
+        $("nav").css("cssText","");
         $("rect.interval").removeClass("play");
+        ft = ""
+        $("small.info").html(x)
       }
+      $("nav").removeClass("blue");
 			source.start(0);
     }, onError);
   }
@@ -65,38 +75,45 @@ function onError() {
 }
 
 $("#chart").on("mouseover","rect.interval",function(){
-  x = " "
-  x += $(this).data("fn").split("_")[0]
-  x += " MHz on "
-  a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
-  a.splice(3,1)
-  x += [a[0]+",",a[1],a[2],a[3]].join(" ")
-  x += " LT, "+String($(this).data("d")/1000)+"s"
-  $("small.info").text(x)
+  if (ft == "") {
+    x = " "
+    x += $(this).data("fn").split("_")[0]
+    x += " MHz on "
+    a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
+    a.splice(3,1)
+    x += [a[0]+",",a[1],a[2],a[3]].join(" ")
+    x += " LT <span>"+String($(this).data("d")/1000)+"s</span>"
+    $("small.info").html(x)
+  }
 })
 
 $("#chart").on("mouseout","rect.interval",function(){
-  $("small.info").text("")
+  $("small.info").html(ft)
 })
 
 $("#chart").on("click","rect.interval",function(){
+
   $("rect.interval").removeClass("play");
   $(this).addClass("play");
-  /*play = $(this).clone().addClass("play").insertAfter($(this));
-  width = play.attr("width")
-  animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
-  animation.setAttributeNS(null, 'id', 'play');
-  animation.setAttributeNS(null, 'attributeName', 'width');
-  animation.setAttributeNS(null, 'from', 0);
-  animation.setAttributeNS(null, 'to', width);
-  animation.setAttributeNS(null, 'dur', String(play.data("d")/1000)+"s");
-  animation.setAttributeNS(null, 'fill', 'freeze');
-  play.append(animation)
-  console.log(String(play.data("d")/1000)+"s")
-  $("#play")[0].beginElement()*/
-  //console.log(width)
-  //play.css("transition","transform "+play.data("d") / 1000 + "s linear 0");
-  //play.attr("width",width);
+
+        $("nav").prop("active",false);
+        $("nav").addClass("blue");
+        $("nav").css("cssText","");
+        ft = ""
+        $("small.info").html(ft)
+  
+  ft = " "
+  ft += $(this).data("fn").split("_")[0]
+  ft += " MHz on "
+  a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
+  a.splice(3,1)
+  ft += [a[0]+",",a[1],a[2],a[3]].join(" ")
+  ft += " LT <span>"+String($(this).data("d")/1000)+"s</span>"
+  $("small.info").html(ft);
+
+  $("nav").css("cssText",navgrad);
+  $("nav").css("transition-duration",($(this).data("d")/1000)+"s");
+  $("nav").prop("active",true)
 	playSound("/txs/"+$(this).data("fn"));
 
   /*if (typeof tx != "undefined") {

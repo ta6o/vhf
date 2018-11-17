@@ -71,6 +71,16 @@
         font-weight: normal;
       }
 
+      small.info span {
+        color: white;
+      }
+
+      nav:active {
+        /*transition: 0s !important;*/
+        background: #2196f3; background: -moz-linear-gradient(left, #2196f3 0%, #2196f3 50%, #4caf50 50%, #4caf50 100%); background: -webkit-linear-gradient(left, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); background: linear-gradient(to right, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2196f3', endColorstr='#4caf50',GradientType=1 );
+        background-position: left 100% top 0% !important;
+      }
+
     %link{:rel=>"apple-touch-icon-precomposed",:href=>"/img/apple-touch-icon-152x152-precomposed.png"}
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -86,7 +96,7 @@
             %i.material-icons.large menu
           .nav-wrapper
             %h5{:style=>"color:white !important; left: 42px !important"} 
-              Marine Radio Playback
+              VHF Backlog
               %small.info
 
     %main
