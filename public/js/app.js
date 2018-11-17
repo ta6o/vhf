@@ -11,18 +11,20 @@ $.each($data, function(i,e) {
       f -= 156025
     }
     c += f / 50
-    d = {"label":String(c),"data":[]};
-    $.each(e.data,function(ii,ee){
-      d.data.push({
-        label: "",
-        type: TimelineChart.TYPE.INTERVAL,
-        from: new Date(ee.t),
-        to: new Date(ee.t + ee.d),
-        d: ee.d,
-        fn: e.label + "_" + String(ee.t) + ".wav"
+    if ( c <= 28 || c >= 60) {
+      d = {"label":String(c),"data":[]};
+      $.each(e.data,function(ii,ee){
+        d.data.push({
+          label: "",
+          type: TimelineChart.TYPE.INTERVAL,
+          from: new Date(ee.t),
+          to: new Date(ee.t + ee.d),
+          d: ee.d,
+          fn: e.label + "_" + String(ee.t) + ".wav"
+        });
       });
-    });
-    recordings.push(d)
+      recordings.push(d)
+    }
   }
 });
 
