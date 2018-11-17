@@ -37,7 +37,6 @@ def parse_recordings
     print "Parsing #{i} / #{l}\r"
     next unless fn.match /^\d+\.\d+_\d{13}.wav$/
     fq = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3)
-    p fq
     next unless (fq * 1000) % 25 == 0
     next if fq > 162.5
     next if fq < 156

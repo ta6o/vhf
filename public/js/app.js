@@ -18,7 +18,8 @@ $.each($data, function(i,e) {
 
 
 
-var tx, tl, st;
+var tx, tl, sl;
+var gain = localStorage.gain || 1;
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 var context = new AudioContext();
@@ -28,7 +29,7 @@ function playSound(url) {
   context.close();
   context = new AudioContext();
   gainNode = context.createGain();
-  gainNode.gain.value = 3;
+  gainNode.gain.value = gain;
   var request = new XMLHttpRequest();
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
@@ -50,6 +51,14 @@ function playSound(url) {
 function onError() {
 }
 
+/*$("#chart").on("mouseover","rect.interval",function(){
+	$(this).css("fill","#0c6")
+})
+
+$("#chart").on("mouseout","rect.interval",function(){
+	$(this).css("fill","#000")
+})*/
+
 $("#chart").on("click","rect.interval",function(){
 	console.log($(this).data("fn"))
 
@@ -66,7 +75,6 @@ $("#chart").on("click","rect.interval",function(){
   }*/
 })
 
-
 function setst(e) {st = e}
 
 function pad(n, width, z) {
@@ -79,13 +87,30 @@ function reset() {
 	$("#chart").html("");
 	$("#chart").css("height", 0);
 	$("#chart").css("height", $("main").height() - 12);
+	$("#gain").css("height", $("main").height() - 32);
+  setSlider();
 	tl = new TimelineChart($("#chart")[0], recordings, {
-		enableLiveTimer: true,
-		timerTickInterval: 1000,
+		enableLiveTimer: false,
 		hideGroupLabels: true
   }).onVizChange(e => setst(e));
 }
 
+function setSlider(){
+  $("#gain").html("");
+  d3.select('#gain').call(
+      sl = d3.slider()
+      .value(10 - (localStorage.gain / 1.6 || 1))
+      .orientation("vertical")
+      .axis( d3.svg.axis().orient("right").ticks(10))
+      .min(10).max(0).step(1)
+			.on("slide", function(evt, value) {
+        value = (10 - value) * 1.6;
+				console.log(value);
+				localStorage.gain = value;
+			  gainNode.gain.value = localStorage.gain;
+		})
+	);
+}
 
 $(window).on("resize",function(){ window.setTimeout(1000,reset()) });
 reset()
