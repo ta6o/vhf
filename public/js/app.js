@@ -2,13 +2,23 @@ recordings = []
 
 $.each($data, function(i,e) {
   if (e.data.length > 0) {
-    d = {"label":e.label,"data":[]};
+    f = parseInt(parseFloat(e.label) * 1000)
+    if ( f % 50 == 0 ) {
+      c = 0;
+      f -= 156000
+    } else {
+      c = 60;
+      f -= 156025
+    }
+    c += f / 50
+    d = {"label":String(c),"data":[]};
     $.each(e.data,function(ii,ee){
       d.data.push({
         label: "",
         type: TimelineChart.TYPE.INTERVAL,
         from: new Date(ee.t),
         to: new Date(ee.t + ee.d),
+        d: ee.d,
         fn: e.label + "_" + String(ee.t) + ".wav"
       });
     });
@@ -37,10 +47,12 @@ function playSound(url) {
   request.onload = function(x) {
     context.decodeAudioData(request.response, function(buffer) {
 			var source = context.createBufferSource();
-      console.log(buffer.numberOfChannels)
 			source.buffer = buffer;
 			source.connect(gainNode);
 			gainNode.connect(context.destination);
+      source.onended = function() {
+        $("rect.interval").removeClass("play");
+      }
 			source.start(0);
     }, onError);
   }
@@ -50,17 +62,39 @@ function playSound(url) {
 function onError() {
 }
 
-/*$("#chart").on("mouseover","rect.interval",function(){
-	$(this).css("fill","#0c6")
+$("#chart").on("mouseover","rect.interval",function(){
+  x = " "
+  x += $(this).data("fn").split("_")[0]
+  x += " MHz on "
+  a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
+  a.splice(3,1)
+  x += [a[0]+",",a[1],a[2],a[3]].join(" ")
+  x += " LT, "+String($(this).data("d")/1000)+"s"
+  $("small.info").text(x)
 })
 
 $("#chart").on("mouseout","rect.interval",function(){
-	$(this).css("fill","#000")
-})*/
+  $("small.info").text("")
+})
 
 $("#chart").on("click","rect.interval",function(){
-	console.log($(this).data("fn"))
-
+  $("rect.interval").removeClass("play");
+  $(this).addClass("play");
+  /*play = $(this).clone().addClass("play").insertAfter($(this));
+  width = play.attr("width")
+  animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+  animation.setAttributeNS(null, 'id', 'play');
+  animation.setAttributeNS(null, 'attributeName', 'width');
+  animation.setAttributeNS(null, 'from', 0);
+  animation.setAttributeNS(null, 'to', width);
+  animation.setAttributeNS(null, 'dur', String(play.data("d")/1000)+"s");
+  animation.setAttributeNS(null, 'fill', 'freeze');
+  play.append(animation)
+  console.log(String(play.data("d")/1000)+"s")
+  $("#play")[0].beginElement()*/
+  //console.log(width)
+  //play.css("transition","transform "+play.data("d") / 1000 + "s linear 0");
+  //play.attr("width",width);
 	playSound("/txs/"+$(this).data("fn"));
 
   /*if (typeof tx != "undefined") {

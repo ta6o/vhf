@@ -66,6 +66,11 @@
       .block {display:block;}
       .nobg { background-color: transparent; }
 
+      small.info {
+        color: black;
+        font-weight: normal;
+      }
+
     %link{:rel=>"apple-touch-icon-precomposed",:href=>"/img/apple-touch-icon-152x152-precomposed.png"}
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -77,10 +82,12 @@
       -#=Haml::Engine.new(IO.read("#{Dir.pwd}/views/sidenav.haml")).render
       .navbar-fixed
         %nav.top-nav.blue
-          %a.button-collapse.top-nav.full{"data-activates" => "nav-mobile", :href => "#"}
+          -#%a.button-collapse.top-nav.full{"data-activates" => "nav-mobile", :href => "#"}
             %i.material-icons.large menu
           .nav-wrapper
-            %h5{:style=>"color:white !important"} &nbsp;
+            %h5{:style=>"color:white !important; left: 42px !important"} 
+              Marine Radio Playback
+              %small.info
 
     %main
       =yield

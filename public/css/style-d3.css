@@ -50,9 +50,14 @@ rect.interval:hover {
     stroke: #0d47a1;
 }
 
-rect.interval.blue-interval {
-    fill: blue;
-    stroke: blue;
+rect.interval.play {
+    fill: #4caf50;
+    stroke: #1b5e20;
+    width: 0;
+}
+
+rect.labels {
+  fill: #2196f3;
 }
 
 circle.blue-dot {
