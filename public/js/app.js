@@ -11,7 +11,7 @@ $.each($data, function(i,e) {
       f -= 156025
     }
     c += f / 50
-    if ( c <= 28 || c >= 60) {
+    if ( c <= 28 || ( c >= 60 && c <= 88)) {
       d = {"label":String(c),"data":[]};
       $.each(e.data,function(ii,ee){
         d.data.push({
