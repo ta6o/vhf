@@ -19,7 +19,6 @@ $.each($data, function(i,e) {
 
 
 var tx, tl, sl;
-var gain = localStorage.gain || 1;
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 var context = new AudioContext();
@@ -29,7 +28,7 @@ function playSound(url) {
   context.close();
   context = new AudioContext();
   gainNode = context.createGain();
-  gainNode.gain.value = gain;
+  gainNode.gain.value = localStorage.gain || 1.6;
   var request = new XMLHttpRequest();
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
