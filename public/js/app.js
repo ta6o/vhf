@@ -23,24 +23,31 @@ var tx, tl, st;
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 var context = new AudioContext();
 var gainNode = context.createGain();
-gainNode.gain.value = 2; // double the volume
 
 function playSound(url) {
+  context.close();
+  context = new AudioContext();
+  gainNode = context.createGain();
+  gainNode.gain.value = 3;
   var request = new XMLHttpRequest();
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
+  console.log(url)
 
-  // Decode asynchronously
-  request.onload = function() {
+  request.onload = function(x) {
     context.decodeAudioData(request.response, function(buffer) {
-			var source = context.createBufferSource(); // creates a sound source
-			source.buffer = buffer;                    // tell the source which sound to play
-			source.connect(gainNode);       // connect the source to the context's destination (the speakers)
-			gainNode.connect(context.destination);       // connect the source to the context's destination (the speakers)
-			source.start(0);                           // play the source now
+			var source = context.createBufferSource();
+      console.log(buffer.numberOfChannels)
+			source.buffer = buffer;
+			source.connect(gainNode);
+			gainNode.connect(context.destination);
+			source.start(0);
     }, onError);
   }
   request.send();
+}
+
+function onError() {
 }
 
 $("#chart").on("click","rect.interval",function(){
