@@ -49,7 +49,7 @@ end
 def update_recordings
   txs = "#{Dir.pwd}/public/txs/"
   diff = `ls -ltr #{txs}*.wav > #{txs}next.diff && diff #{txs}prev.diff #{txs}next.diff`
-  `mv #{txs}next.diff #{txs}prev.diff`
+  `cp #{txs}next.diff #{txs}prev.diff`
   diff = diff.split(/\n+/)
   diff.shift
   diff.map! {|d| d.split(/\//)[-1]}
