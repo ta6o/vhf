@@ -147,7 +147,7 @@ function reset() {
     tl = new TimelineChart($("#chart")[0], rx, {
       enableLiveTimer: false,
       hideGroupLabels: true
-    })
+    }).onVizChange(e => setst(e));
   })
 }
 
