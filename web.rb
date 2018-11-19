@@ -36,23 +36,12 @@ rescue
 end
 
 def parse_recordings
-  l = `ls -lA public/txs/ | wc -l`.strip
+  txs = "#{Dir.pwd}/public/txs/"
+  `ls -ltr #{txs}*.wav > #{txs}prev.diff`
+  l = `cat #{txs}prev.diff | wc -l`.strip
   Dir.foreach("./public/txs").sort.each_with_index do |fn,i|
     print "Parsing #{i} / #{l}\r"
-    next unless fn.match /^\d+\.\d+_\d{13}.wav$/
-    fq = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3)
-    next unless (fq * 1000) % 25 == 0
-    next if fq > 162.5
-    next if fq < 156
-    f = fq.to_s.ljust(7,"0")
-    $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
-    ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
-    next if $data[f]["ts"].include?(ts)
-    $data[f]["ts"] << ts
-    # t = Time.at(ts).to_s
-    d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
-    next if d < 400
-    $data[f]["data"] << { "d" => d, "t" => ts }
+    parse_file fn
   end
   File.open("./public/txs/data.json","w") {|f| f << $data.to_json }
 end
@@ -64,7 +53,31 @@ def update_recordings
   diff = diff.split(/\n+/)
   diff.shift
   diff.map! {|d| d.split(/\//)[-1]}
-  diff.to_json
+  diff.sort.each_with_index do |fn,i|
+    parse_file fn
+  end
+  File.open("#{txs}data.json","w") {|f| f << $data.to_json }
+  diff.length.to_s
+end
+
+def parse_file fn
+  return unless fn.match /^\d+\.\d+_\d{13}.wav$/
+  fq = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3)
+  return unless (fq * 1000) % 25 == 0
+  return if fq > 162.5
+  return if fq < 156
+  f = fq.to_s.ljust(7,"0")
+  $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
+  ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
+  return if $data[f]["ts"].include?(ts)
+  # t = Time.at(ts).to_s
+  d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
+  if d < 400
+    `rm #{Dir.pwd}/public/txs/#{fn}`
+    return 
+  end
+  $data[f]["ts"] << ts
+  $data[f]["data"] << { "d" => d, "t" => ts }
 end
 
 parse_recordings

@@ -1,40 +1,41 @@
-recordings = []
+var tx, tl, sl;
+var ft = "";
 
 navgrad = " background: #2196f3; background: -moz-linear-gradient(left, #2196f3 0%, #2196f3 50%, #4caf50 50%, #4caf50 100%); background: -webkit-linear-gradient(left, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); background: linear-gradient(to right, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2196f3', endColorstr='#4caf50',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
 navgrad = " background: #4caf50; background: -moz-linear-gradient(left, #4caf50 0%, #4caf50 50%, #2196f3 50%, #2196f3 100%); background: -webkit-linear-gradient(left, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); background: linear-gradient(to right, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4caf50', endColorstr='#2196f3',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
 
-$.each($data, function(i,e) {
-  if (e.data.length > 0) {
-    f = parseInt(parseFloat(e.label) * 1000)
-    if ( f % 50 == 0 ) {
-      c = 0;
-      f -= 156000
-    } else {
-      c = 60;
-      f -= 156025
-    }
-    c += f / 50
-    if ( c <= 28 || ( c >= 60 && c <= 88)) {
-      d = {"label":String(c),"data":[]};
-      $.each(e.data,function(ii,ee){
-        d.data.push({
-          label: "",
-          type: TimelineChart.TYPE.INTERVAL,
-          from: new Date(ee.t),
-          to: new Date(ee.t + ee.d),
-          d: ee.d,
-          fn: e.label + "_" + String(ee.t) + ".wav"
+function prepRx(data) {
+  var rx = []
+  $.each(data, function(i,e) {
+    if (e.data.length > 0) {
+      f = parseInt(parseFloat(e.label) * 1000)
+      if ( f % 50 == 0 ) {
+        c = 0;
+        f -= 156000
+      } else {
+        c = 60;
+        f -= 156025
+      }
+      c += f / 50
+      if ( c <= 28 || ( c >= 60 && c <= 88)) {
+        d = {"label":String(c),"data":[]};
+        $.each(e.data,function(ii,ee){
+          d.data.push({
+            label: "",
+            type: TimelineChart.TYPE.INTERVAL,
+            from: new Date(ee.t),
+            to: new Date(ee.t + ee.d),
+            d: ee.d,
+            fn: e.label + "_" + String(ee.t) + ".wav"
+          });
         });
-      });
-      recordings.push(d)
+        rx.push(d)
+      }
     }
-  }
-});
+  });
+  return rx
+}
 
-
-
-var tx, tl, sl;
-var ft = "";
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 var context = new AudioContext();
@@ -136,15 +137,18 @@ function pad(n, width, z) {
 }
 
 function reset() {
-	$("#chart").html("");
-	$("#chart").css("height", 0);
-	$("#chart").css("height", $("main").height() - 12);
-	$("#gain").css("height", $("main").height() - 32);
-  setSlider();
-	tl = new TimelineChart($("#chart")[0], recordings, {
-		enableLiveTimer: false,
-		hideGroupLabels: true
-  }).onVizChange(e => setst(e));
+  $.getJSON("/txs/data.json",function(data) {
+      rx = prepRx(Object.values(data));
+    $("#chart").html("");
+    $("#chart").css("height", 0);
+    $("#chart").css("height", $("main").height() - 12);
+    $("#gain").css("height", $("main").height() - 32);
+    setSlider();
+    tl = new TimelineChart($("#chart")[0], rx, {
+      enableLiveTimer: false,
+      hideGroupLabels: true
+    })
+  })
 }
 
 function setSlider(){
