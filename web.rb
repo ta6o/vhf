@@ -13,6 +13,10 @@ get "/?" do
   haml :index
 end
 
+get "/update/?" do 
+  update_recordings
+end
+
 not_found do 
   redirect to "/"
 end
@@ -43,7 +47,6 @@ def parse_recordings
     f = fq.to_s.ljust(7,"0")
     $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
     ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
-    puts ts
     next if $data[f]["ts"].include?(ts)
     $data[f]["ts"] << ts
     # t = Time.at(ts).to_s
@@ -52,6 +55,16 @@ def parse_recordings
     $data[f]["data"] << { "d" => d, "t" => ts }
   end
   File.open("./public/txs/data.json","w") {|f| f << $data.to_json }
+end
+
+def update_recordings
+  txs = "#{Dir.pwd}/public/txs/"
+  diff = `ls -ltr #{txs}*.wav > #{txs}next.diff && diff #{txs}prev.diff #{txs}next.diff`
+  `mv #{txs}next.diff #{txs}prev.diff`
+  diff = diff.split(/\n+/)
+  diff.shift
+  diff.map! {|d| d.split(/\//)[-1]}
+  diff.to_json
 end
 
 parse_recordings
