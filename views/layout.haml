@@ -75,10 +75,18 @@
         color: white;
       }
 
-      nav:active {
+      nav:disabled {
         /*transition: 0s !important;*/
         background: #2196f3; background: -moz-linear-gradient(left, #2196f3 0%, #2196f3 50%, #4caf50 50%, #4caf50 100%); background: -webkit-linear-gradient(left, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); background: linear-gradient(to right, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2196f3', endColorstr='#4caf50',GradientType=1 );
         background-position: left 100% top 0% !important;
+      }
+
+      a#update i {
+        padding: 0px 24px;
+      }
+
+      a#update:hover i {
+        font-weight: bold;
       }
 
     %link{:rel=>"apple-touch-icon-precomposed",:href=>"/img/apple-touch-icon-152x152-precomposed.png"}
@@ -98,6 +106,9 @@
             %h5{:style=>"color:white !important; left: 42px !important"} 
               VHF Backlog
               %small.info
+            .right
+              %a#update{:href=>"#"}
+                %i.material-icons cached
 
     %main
       =yield

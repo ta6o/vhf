@@ -58,7 +58,7 @@ function playSound(url) {
 			source.connect(gainNode);
 			gainNode.connect(context.destination);
       source.onended = function() {
-        $("nav").prop("active",false);
+        $("nav").prop("disabled",false);
         $("nav").addClass("blue");
         $("nav").css("cssText","");
         $("rect.interval").removeClass("play");
@@ -92,12 +92,20 @@ $("#chart").on("mouseout","rect.interval",function(){
   $("small.info").html(ft)
 })
 
+$("a#update").on("click",function(){
+  $.getJSON("/update",function(data){
+    if (data[0] > 0) {
+      reset();
+    }
+  })
+})
+
 $("#chart").on("click","rect.interval",function(){
 
   $("rect.interval").removeClass("play");
   $(this).addClass("play");
 
-        $("nav").prop("active",false);
+        $("nav").prop("disabled",false);
         $("nav").addClass("blue");
         $("nav").css("cssText","");
         ft = ""
@@ -114,7 +122,7 @@ $("#chart").on("click","rect.interval",function(){
 
   $("nav").css("cssText",navgrad);
   $("nav").css("transition-duration",($(this).data("d")/1000)+"s");
-  $("nav").prop("active",true)
+  $("nav").prop("disabled",true)
 	playSound("/txs/"+$(this).data("fn"));
 
   /*if (typeof tx != "undefined") {

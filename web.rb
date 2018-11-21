@@ -53,31 +53,33 @@ def update_recordings
   diff = diff.split(/\n+/)
   diff.shift
   diff.map! {|d| d.split(/\//)[-1]}
+  parsed = 0
   diff.sort.each_with_index do |fn,i|
-    parse_file fn
+    parsed += parse_file fn
   end
   File.open("#{txs}data.json","w") {|f| f << $data.to_json }
-  diff.length.to_s
+  [parsed,diff.length].to_json
 end
 
 def parse_file fn
-  return unless fn.match /^\d+\.\d+_\d{13}.wav$/
+  return 0 unless fn.match /^\d+\.\d+_\d{13}.wav$/
   fq = (fn.match(/^\d+\.\d+/)[0].to_f - $offset).round(3)
-  return unless (fq * 1000) % 25 == 0
-  return if fq > 162.5
-  return if fq < 156
+  return 0 unless (fq * 1000) % 25 == 0
+  return 0 if fq > 162.5
+  return 0 if fq < 156
   f = fq.to_s.ljust(7,"0")
   $data[f] = {"label"=>f, "data"=>[],"ts"=>[]} unless $data.has_key?(f)
   ts = fn.match(/_\d{13}\./)[0][1..-2].to_i
-  return if $data[f]["ts"].include?(ts)
+  return 0 if $data[f]["ts"].include?(ts)
   # t = Time.at(ts).to_s
   d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
   if d < 400
     `rm #{Dir.pwd}/public/txs/#{fn}`
-    return 
+    return 0 
   end
   $data[f]["ts"] << ts
   $data[f]["data"] << { "d" => d, "t" => ts }
+  return 1
 end
 
 parse_recordings
