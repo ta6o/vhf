@@ -5,20 +5,37 @@ navgrad = " background: #2196f3; background: -moz-linear-gradient(left, #2196f3 
 navgrad = " background: #4caf50; background: -moz-linear-gradient(left, #4caf50 0%, #4caf50 50%, #2196f3 50%, #2196f3 100%); background: -webkit-linear-gradient(left, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); background: linear-gradient(to right, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4caf50', endColorstr='#2196f3',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
 
 $(document).ready(function(){
+  
+  function freq2chnl (f) {
+    f = parseInt(parseFloat(f)*1000)
+    if ( f % 50 == 0 ) {
+      c = 0;
+      f -= 156000
+    } else {
+      c = 60;
+      f -= 156025
+    }
+    c += f / 50
+    return c
+  }
+
+  function chnl2freq (c) {
+    if ( c >= 60 ) {
+      c -= 60;
+      f = 156000
+    } else {
+      f = 156025
+    }
+    f += c * 50
+    return f
+  }
+
 
   function prepRx(data) {
     rx = []
     $.each(data, function(i,e) {
       if (e.data.length > 0) {
-        f = parseInt(parseFloat(e.label) * 1000)
-        if ( f % 50 == 0 ) {
-          c = 0;
-          f -= 156000
-        } else {
-          c = 60;
-          f -= 156025
-        }
-        c += f / 50
+        c = freq2chnl(e.label)
         if ( c <= 28 || ( c >= 60 && c <= 88)) {
           d = {"label":String(c),"data":[]};
           $.each(e.data,function(ii,ee){
@@ -151,9 +168,24 @@ $(document).ready(function(){
 
     } else if ( e.detail == 2 ) {
       e.preventDefault();
-      html = ft
+      ts = $(this).data("fn").split("_")[1].split(".")[0].substr(0,10)
+      ln = ft.split(" on ")
+      ago = (new Date() - new Date(ts * 1000))
+      days = Math.floor(ago / (60 * 24))
+      ago %= (60*24)
+      hrs = Math.floor(ago / (60))
+      mins = Math.floor(ago % (60*24))
+      ago = "";
+      ago += days > 0 ? days+"days, " : ""
+      ago += hrs > 0 ? hrs+"hours, " : ""
+      ago += mins > 0 ? mins+"minutes ago" : ""
+      if (ago.length == 0) ago = "just now"
+      html = "<h5>"+ln[0]+" (channel "+freq2chnl(ln[0])+")</h5>";
+      html += "<p>"+ln[1].split("LT")[0]+"LT ("+ago+")<br/>"
+      html += "Duration:"+ln[1].split("LT")[1]+"</p>"
       stopPlaying();
-      $.getJSON("/loginfo/"+$(this).data("fn").split("_")[1].split(".")[0],function(data){
+      $.getJSON("/loginfo/"+ts,function(data){
+        html += JSON.stringofy(data)
         $(".modal .modal-content").html(html)
         $(".modal").modal("open")
       })
