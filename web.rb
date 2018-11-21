@@ -17,6 +17,10 @@ get "/update/?" do
   update_recordings
 end
 
+get "/loginfo/:ts/?" do 
+  pick_from_log(params[:ts]).to_json
+end
+
 not_found do 
   redirect to "/"
 end
@@ -33,6 +37,31 @@ begin
   $data = JSON.parse(File.read("./public/txs/data.json"))
 rescue
   $data = {}
+end
+
+
+def pick_from_log ts
+  logcsv = "/var/www/gauge/public/data/log.csv"
+  logcsv = "/home/ro1/git/gauge/public/data/log.csv"
+  tts = ts.to_i
+  return false unless tts.to_s == ts.to_s
+  lts = Time.now.to_i
+  dif = (tts - lts) / 60
+  lln = `cat #{logcsv} | wc -l`.strip.to_i
+  line = lln + dif
+  enough = false
+  difs = []
+  while dif.abs > 1 and not enough
+    lts = `sed '#{line.abs}q;d' #{logcsv}`.strip.split(",")[0].to_i
+    dif = (tts - lts) / 60
+    difs << dif
+    line += dif
+    line = 1 if line < 1
+    line = lln if line > lln
+    enough = true if difs.length - difs.uniq.length > 4
+  end
+  return false if enough
+  `sed '#{line}q;d' #{logcsv}`.strip.split(",")
 end
 
 def parse_recordings
