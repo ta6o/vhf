@@ -6,6 +6,12 @@ navgrad = " background: #4caf50; background: -moz-linear-gradient(left, #4caf50 
 
 $(document).ready(function(){
   
+  function dec2dms(D, lng){
+    D = parseFloat(D);
+    dir = (D<0?lng?'W':'S':lng?'E':'N');
+    return (0|(D<0?D=-D:D))+"°"+ (0|D%1*60)+"'"+ ((0|D*60%1*6000)/100)+"\""+ dir;
+  }
+
   function freq2chnl (f) {
     f = parseInt(parseFloat(f)*1000)
     if ( f % 50 == 0 ) {
@@ -170,22 +176,28 @@ $(document).ready(function(){
       e.preventDefault();
       ts = $(this).data("fn").split("_")[1].split(".")[0].substr(0,10)
       ln = ft.split(" on ")
-      ago = (new Date() - new Date(ts * 1000))
+      ago = Math.floor((new Date() - new Date(ts * 1000)) / (60 * 1000))
+      console.log(ago)
       days = Math.floor(ago / (60 * 24))
       ago %= (60*24)
+      console.log(ago)
       hrs = Math.floor(ago / (60))
-      mins = Math.floor(ago % (60*24))
+      ago %= (60)
+      mins = Math.floor(ago)
       ago = "";
-      ago += days > 0 ? days+"days, " : ""
-      ago += hrs > 0 ? hrs+"hours, " : ""
-      ago += mins > 0 ? mins+"minutes ago" : ""
+      ago += days > 0 ? days+" days, " : ""
+      ago += hrs > 0 ? hrs+" hours, " : ""
+      ago += mins > 0 ? mins+" minutes ago" : ""
       if (ago.length == 0) ago = "just now"
-      html = "<h5>"+ln[0]+" (channel "+freq2chnl(ln[0])+")</h5>";
-      html += "<p>"+ln[1].split("LT")[0]+"LT ("+ago+")<br/>"
-      html += "Duration:"+ln[1].split("LT")[1]+"</p>"
+      html = "<h5>Channel "+freq2chnl(ln[0])+" <small style='font-weight: normal;'>("+ln[0]+" )</small></h5>";
+      html += "<p><b>"+ln[1].split("LT")[0]+"LT</b> ("+ago+")<br/>"
+      html += "Duration:<b>"+ln[1].split("LT")[1]+"</b><br/>"
       stopPlaying();
       $.getJSON("/loginfo/"+ts,function(data){
-        html += JSON.stringofy(data)
+          console.log(data)
+        html += "Recorded at: ";
+        html += " <b>"+dec2dms(data[1],false)+"</b>, ";
+        html += "<b>"+dec2dms(data[2],true)+"</b></p>"
         $(".modal .modal-content").html(html)
         $(".modal").modal("open")
       })
@@ -215,7 +227,7 @@ $(document).ready(function(){
       setSlider();
       tl = new TimelineChart($("#chart")[0], rxs, {
         enableLiveTimer: false,
-        hideGroupLabels: true
+        haideGroupLabels: true
       }).onVizChange(e => setst(e)).setState(state,rxs);
       d3.select("svg").on("dblclick.zoom", null);
     })
