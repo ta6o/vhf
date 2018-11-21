@@ -59,6 +59,7 @@ def pick_from_log ts
     line = 1 if line < 1
     line = lln if line > lln
     enough = true if difs.length - difs.uniq.length > 4
+    pp [lts, dif]
   end
   return [] if enough
   `sed '#{line}q;d' #{logcsv}`.strip.split(",")
