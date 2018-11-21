@@ -43,6 +43,16 @@ $(document).ready(function(){
   var context = new AudioContext();
   var gainNode = context.createGain();
 
+  function stopPlaying() {
+    context.close();
+    $("nav").prop("disabled",false);
+    $("nav").addClass("blue");
+    $("nav").css("cssText","");
+    $("rect.interval").removeClass("play");
+    ft = ""
+    $("small.info").html(x)
+  }
+
   function playSound(url) {
     context.close();
     context = new AudioContext();
@@ -103,47 +113,51 @@ $(document).ready(function(){
     })
   })
 
-  $("#chart").on("click","rect.interval",function(){
+  $("#chart").on("click","rect.interval",function(e){
 
-    $("rect.interval").removeClass("play");
-    $(this).addClass("play");
+    if (e.detail == 1 && fn.length == 0) {
+      $("rect.interval").removeClass("play");
+      $(this).addClass("play");
 
-          $("nav").prop("disabled",false);
-          $("nav").addClass("blue");
-          $("nav").css("cssText","");
-          ft = ""
-          $("small.info").html(ft)
-    
-    ft = " "
-    ft += $(this).data("fn").split("_")[0]
-    ft += " MHz on "
-    a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
-    a.splice(3,1)
-    ft += [a[0]+",",a[1],a[2],a[3]].join(" ")
-    ft += " LT <span>"+String($(this).data("d")/1000)+"s</span>"
-    $("small.info").html(ft);
+            $("nav").prop("disabled",false);
+            $("nav").addClass("blue");
+            $("nav").css("cssText","");
+            ft = ""
+            $("small.info").html(ft)
+      
+      ft = " "
+      ft += $(this).data("fn").split("_")[0]
+      ft += " MHz on "
+      a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
+      a.splice(3,1)
+      ft += [a[0]+",",a[1],a[2],a[3]].join(" ")
+      ft += " LT <span>"+String($(this).data("d")/1000)+"s</span>"
+      $("small.info").html(ft);
 
-    $("nav").css("cssText",navgrad);
-    $("nav").css("transition-duration",($(this).data("d")/1000)+"s");
-    $("nav").prop("disabled",true)
-    playSound("/txs/"+$(this).data("fn"));
+      $("nav").css("cssText",navgrad);
+      $("nav").css("transition-duration",($(this).data("d")/1000)+"s");
+      $("nav").prop("disabled",true)
+      playSound("/txs/"+$(this).data("fn"));
 
-    /*if (typeof tx != "undefined") {
-      tx.src = "/txs/"+$(this).data("fn");
-      tx.currentTime = 0;
-      tx.play();
-    } else {
-      tx = new Audio("/txs/"+$(this).data("fn"));
-      tx.volume = 1;
-      tx.play();
-    }*/
-  })
+      /*if (typeof tx != "undefined") {
+        tx.src = "/txs/"+$(this).data("fn");
+        tx.currentTime = 0;
+        tx.play();
+      } else {
+        tx = new Audio("/txs/"+$(this).data("fn"));
+        tx.volume = 1;
+        tx.play();
+      }*/
 
-  $("#chart").on("dblclick","rect.interval",function(){
-    $.getJSON("/loginfo/"+$(this).data("fn").split("_")[1].split(".")[0],function(data){
+    } else if (e.detail ==2) {
+      e.preventDefault();
+      stopPlaying();
+      $.getJSON("/loginfo/"+$(this).data("fn").split("_")[1].split(".")[0],function(data){
         console.log(data)
-    })
+      })
+    }
   })
+
 
   function setst(e) {
     state = e;
