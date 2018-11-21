@@ -107,9 +107,7 @@ var TimelineChart = function() {
                     domain: x.domain()
                 });
             } else {
-              if (typeof state == "string") { state = JSON.parse(state); }
-              console.log(state);
-              console.log(zoom.scale(state.scale).translate(state.translate))
+              zoom.scale(state.scale).translate(state.translate)
             }
             svg.select('.x.axis').call(xAxis);
             svg.selectAll('circle.dot').attr('cx', function(d) {
@@ -181,15 +179,14 @@ var TimelineChart = function() {
         }
     }, {
         key: 'setState',
-        value: function setState(state,data) {
-          if (typeof state == "string") { state = JSON.parse(state); }
+        value: function setState(st,data) {
           var margin = { top: 0, right: 0, bottom: 20, left: 0 };
           var element = $("#chart")[0];
           var allElements = data.reduce(function(agg, e) {
               return agg.concat(e.data);
           }, []);
-          var minDt = new Date(state.domain[0]);
-          var maxDt = new Date(state.domain[1]);
+          var minDt = new Date(st.domain[0]);
+          var maxDt = new Date(st.domain[1]);
           var elementWidth = element.clientWidth;
           var elementHeight = element.clientHeight;
           var width = elementWidth - margin.left - margin.right;
