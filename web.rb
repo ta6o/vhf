@@ -18,6 +18,7 @@ get "/update/?" do
 end
 
 get "/loginfo/:ts/?" do 
+  pp params
   pick_from_log(params[:ts]).to_json
 end
 
