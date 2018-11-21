@@ -115,7 +115,7 @@ $(document).ready(function(){
 
   $("#chart").on("click","rect.interval",function(e){
 
-    if (e.detail == 1 && fn.length == 0) {
+    if (e.detail == 1 && ft.length == 0) {
       $("rect.interval").removeClass("play");
       $(this).addClass("play");
 
