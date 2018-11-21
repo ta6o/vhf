@@ -1,11 +1,11 @@
-var tx, tl, sl;
+var tx, tl, sl, rxs, state;
 var ft = "";
 
 navgrad = " background: #2196f3; background: -moz-linear-gradient(left, #2196f3 0%, #2196f3 50%, #4caf50 50%, #4caf50 100%); background: -webkit-linear-gradient(left, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); background: linear-gradient(to right, #2196f3 0%,#2196f3 50%,#4caf50 50%,#4caf50 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2196f3', endColorstr='#4caf50',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
 navgrad = " background: #4caf50; background: -moz-linear-gradient(left, #4caf50 0%, #4caf50 50%, #2196f3 50%, #2196f3 100%); background: -webkit-linear-gradient(left, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); background: linear-gradient(to right, #4caf50 0%,#4caf50 50%,#2196f3 50%,#2196f3 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4caf50', endColorstr='#2196f3',GradientType=1 ); background-repeat: no-repeat; background-size: 200% 100%; background-position: right 0% top 0%; transition-property: background-position; transition-delay: 0s; transition-timing-function: linear;"
 
 function prepRx(data) {
-  var rx = []
+  rx = []
   $.each(data, function(i,e) {
     if (e.data.length > 0) {
       f = parseInt(parseFloat(e.label) * 1000)
@@ -45,7 +45,7 @@ function playSound(url) {
   context.close();
   context = new AudioContext();
   gainNode = context.createGain();
-  gainNode.gain.value = localStorage.gain || 1.6;
+  gainNode.gain.value = parseFloat(localStorage.gain) || 1.6;
   var request = new XMLHttpRequest();
   request.open('GET', url, true);
   request.responseType = 'arraybuffer';
@@ -94,6 +94,7 @@ $("#chart").on("mouseout","rect.interval",function(){
 
 $("a#update").on("click",function(){
   $.getJSON("/update",function(data){
+    console.log(data)
     if (data[0] > 0) {
       reset();
     }
@@ -136,7 +137,10 @@ $("#chart").on("click","rect.interval",function(){
   }*/
 })
 
-function setst(e) {st = e}
+function setst(e) {
+  state = e;
+  localStorage.setItem('state', JSON.stringify(e));
+}
 
 function pad(n, width, z) {
   z = z || '0';
@@ -145,17 +149,18 @@ function pad(n, width, z) {
 }
 
 function reset() {
+  state = JSON.parse(localStorage.state);
   $.getJSON("/txs/data.json",function(data) {
-      rx = prepRx(Object.values(data));
+    rxs = prepRx(Object.values(data));
     $("#chart").html("");
     $("#chart").css("height", 0);
     $("#chart").css("height", $("main").height() - 12);
     $("#gain").css("height", $("main").height() - 32);
     setSlider();
-    tl = new TimelineChart($("#chart")[0], rx, {
+    tl = new TimelineChart($("#chart")[0], rxs, {
       enableLiveTimer: false,
       hideGroupLabels: true
-    }).onVizChange(e => setst(e));
+    }).onVizChange(e => setst(e)).setState(state,rxs);
   })
 }
 
@@ -177,5 +182,7 @@ function setSlider(){
 }
 
 $(window).on("resize",function(){ window.setTimeout(1000,reset()) });
-reset()
+
+reset();
+
 

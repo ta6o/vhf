@@ -81,7 +81,7 @@ var TimelineChart = function() {
         }).attr("data-fn", function(d) {
             return d.fn
         }); 
-/*var intervalTexts=groupIntervalItems.append('text').text(function(d){return d.label;}).attr('fill','white').attr('class','interval-text').attr('y',groupHeight/2+5).attr('x',function(d){return x(d.from);});*/
+        /*var intervalTexts=groupIntervalItems.append('text').text(function(d){return d.label;}).attr('fill','white').attr('class','interval-text').attr('y',groupHeight/2+5).attr('x',function(d){return x(d.from);});*/
         var groupDotItems = svg.selectAll('.item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', '.item').attr('transform', function(d, i) {
             return 'translate(0, ' + groupHeight * i + ')';
         }).selectAll('.dot').data(function(d) {
@@ -106,6 +106,10 @@ var TimelineChart = function() {
                     translate: d3.event.translate,
                     domain: x.domain()
                 });
+            } else {
+              if (typeof state == "string") { state = JSON.parse(state); }
+              console.log(state);
+              console.log(zoom.scale(state.scale).translate(state.translate))
             }
             svg.select('.x.axis').call(xAxis);
             svg.selectAll('circle.dot').attr('cx', function(d) {
@@ -116,7 +120,7 @@ var TimelineChart = function() {
             }).attr('width', function(d) {
                 return x(d.to) - x(d.from);
             });
-            svg.selectAll('.interval-text').attr('x', function(d) {
+            /*svg.selectAll('.interval-text').attr('x', function(d) {
                 var positionData = getTextPositionData.call(this, d);
                 if (positionData.upToPosition - groupWidth - 10 < positionData.textWidth) {
                     return positionData.upToPosition;
@@ -144,7 +148,7 @@ var TimelineChart = function() {
                     upToPosition: x(d.to),
                     textWidth: this.getComputedTextLength()
                 };
-            }
+            }*/
         }
     }
     _createClass(TimelineChart, [{
@@ -175,6 +179,35 @@ var TimelineChart = function() {
             this.onVizChange = fn;
             return this;
         }
+    }, {
+        key: 'setState',
+        value: function setState(state,data) {
+          if (typeof state == "string") { state = JSON.parse(state); }
+          var margin = { top: 0, right: 0, bottom: 20, left: 0 };
+          var element = $("#chart")[0];
+          var allElements = data.reduce(function(agg, e) {
+              return agg.concat(e.data);
+          }, []);
+          var minDt = new Date(state.domain[0]);
+          var maxDt = new Date(state.domain[1]);
+          var elementWidth = element.clientWidth;
+          var elementHeight = element.clientHeight;
+          var width = elementWidth - margin.left - margin.right;
+          var height = elementHeight - margin.top - margin.bottom;
+          var groupWidth = 36;
+          var x = d3.time.scale().domain([minDt, maxDt]).range([groupWidth, width]);
+          var xAxis = d3.svg.axis().scale(x).orient('bottom').tickSize(-height);
+          var svg = d3.select("#chart")
+          svg.select('.x.axis').call(xAxis);
+          svg.selectAll('circle.dot').attr('cx', function(d) {
+              return x(d.at);
+          });
+          svg.selectAll('rect.interval').attr('x', function(d) {
+              return x(d.from);
+          }).attr('width', function(d) {
+              return x(d.to) - x(d.from);
+          });
+        }
     }]);
     return TimelineChart;
 }();
@@ -182,3 +215,4 @@ TimelineChart.TYPE = {
     POINT: Symbol(),
     INTERVAL: Symbol()
 };
+
