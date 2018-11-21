@@ -183,6 +183,7 @@ $(document).ready(function(){
         enableLiveTimer: false,
         hideGroupLabels: true
       }).onVizChange(e => setst(e)).setState(state,rxs);
+      d3.select("svg").on("dblclick.zoom", null);
     })
   }
 

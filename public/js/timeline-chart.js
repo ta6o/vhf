@@ -45,7 +45,7 @@ var TimelineChart = function() {
         var groupWidth = 36;
         var x = d3.time.scale().domain([minDt, maxDt]).range([groupWidth, width]);
         var xAxis = d3.svg.axis().scale(x).orient('bottom').tickSize(-height);
-        var zoom = d3.behavior.zoom().x(x).on('zoom', zoomed).on("dblclick.zoom", null);
+        var zoom = d3.behavior.zoom().x(x).on('zoom', zoomed);
         var svg = d3.select(element).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').call(zoom);
         svg.append('defs').append('clipPath').attr('id', 'chart-content').append('rect').attr('x', groupWidth).attr('y', 0).attr('height', height).attr('width', width - groupWidth);
         svg.append('rect').attr('class', 'labels').attr('x', 0).attr('y', 0).attr('height', height).attr('width', groupWidth);
