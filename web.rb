@@ -42,13 +42,11 @@ end
 
 def pick_from_log ts
   logcsv = "/var/www/gauge/public/data/log.csv"
-  #logcsv = "/home/ro1/git/gauge/public/data/log.csv"
   tts = ts.to_i
   return [] unless tts.to_s == ts.to_s
   lts = Time.now.to_i
   dif = (tts - lts) / 60
   lln = `cat #{logcsv} | wc -l`.strip.to_i
-  p [tts, dif, lln]
   line = lln + dif
   enough = false
   difs = []
@@ -60,7 +58,6 @@ def pick_from_log ts
     line = 1 if line < 1
     line = lln if line > lln
     enough = true if difs.length - difs.uniq.length > 4
-    pp [lts, dif, lln]
   end
   return [] if enough
   `sed '#{line}q;d' #{logcsv}`.strip.split(",")

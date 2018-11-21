@@ -149,11 +149,13 @@ $(document).ready(function(){
         tx.play();
       }*/
 
-    } else if (e.detail ==2) {
+    } else if ( e.detail == 2 ) {
       e.preventDefault();
+      html = ft
       stopPlaying();
       $.getJSON("/loginfo/"+$(this).data("fn").split("_")[1].split(".")[0],function(data){
-        console.log(data)
+        $(".modal .modal-content").html(html)
+        $(".modal").modal("open")
       })
     }
   })
