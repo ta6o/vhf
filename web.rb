@@ -30,7 +30,7 @@ error do
 end
 
 
-# python2 ./ham2mon.py -w -m -f 156.7e6 -r 1e6 -n4 -t 10 -s -60 -g 14 -a "hackrf"
+# python2 ./ham2mon.py -a "rtl_tcp=172.16.212.15:1234" -w -m -f 157e6 -r 2048e3 -n 10 -t 8 -g 35
 $offset = 0
 
 begin

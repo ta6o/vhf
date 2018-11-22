@@ -106,7 +106,7 @@ var TimelineChart = function() {
                     translate: d3.event.translate,
                     domain: x.domain()
                 });
-            } else {
+            } else if (typeof state.scale != "undefined" && typeof state.translate != "undefined") {
               zoom.scale(state.scale).translate(state.translate)
             }
             svg.select('.x.axis').call(xAxis);

@@ -127,6 +127,46 @@ $(document).ready(function(){
     $("small.info").html(ft)
   })
 
+  $("body").on("contextmenu",function(e){
+    e.preventDefault();
+  });
+
+  $("#chart").on("contextmenu","rect.interval",function(e){
+    e.preventDefault();
+    ln = " "
+    ln += $(this).data("fn").split("_")[0]
+    ln += " MHz on "
+    a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
+    a.splice(3,1)
+    ln += [a[0]+",",a[1],a[2],a[3]].join(" ")
+    ln += " LT <span>"+String($(this).data("d")/1000)+"s</span>"
+    ts = $(this).data("fn").split("_")[1].split(".")[0].substr(0,10)
+    ln = ln.split(" on ")
+    ago = Math.floor((new Date() - new Date(ts * 1000)) / (60 * 1000))
+    days = Math.floor(ago / (60 * 24))
+    ago %= (60*24)
+    hrs = Math.floor(ago / (60))
+    ago %= (60)
+    mins = Math.floor(ago)
+    ago = "";
+    ago += days > 0 ? days+" days, " : ""
+    ago += hrs > 0 ? hrs+" hours, " : ""
+    ago += mins > 0 ? mins+" minutes ago" : ""
+    if (ago.length == 0) ago = "just now"
+    html = "<h5>Channel "+freq2chnl(ln[0])+" <small style='font-weight: normal;'>("+ln[0]+" )</small></h5>";
+    html += "<p><b>"+ln[1].split("LT")[0]+"LT</b> ("+ago+")<br/>"
+    html += "Duration:<b>"+ln[1].split("LT")[1]+"</b><br/>"
+    stopPlaying();
+    $.getJSON("/loginfo/"+ts,function(data){
+        console.log(data)
+      html += "Recorded at: ";
+      html += " <b>"+dec2dms(data[1],false)+"</b>, ";
+      html += "<b>"+dec2dms(data[2],true)+"</b></p>"
+      $(".modal .modal-content").html(html)
+      $(".modal").modal("open")
+    })
+  })
+
   $("a#update").on("click",function(){
     $.getJSON("/update",function(data){
       console.log(data)
@@ -217,7 +257,7 @@ $(document).ready(function(){
   }
 
   function reset() {
-    state = JSON.parse(localStorage.state);
+    state = JSON.parse(localStorage.state || "{}");
     $.getJSON("/txs/data.json",function(data) {
       rxs = prepRx(Object.values(data));
       $("#chart").html("");
