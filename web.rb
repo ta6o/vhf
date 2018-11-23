@@ -102,7 +102,7 @@ def parse_file fn
   # t = Time.at(ts).to_s
   d = (`soxi -D #{Dir.pwd}/public/txs/#{fn}`.to_f * 1000).to_i
   if d < 400
-    `rm #{Dir.pwd}/public/txs/#{fn}`
+    `rm #{Dir.pwd}/public/txs/#{fn}` if Time.now - Time.at(ts) > 300
     return 0 
   end
   $data[f]["ts"] << ts
