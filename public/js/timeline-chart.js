@@ -48,19 +48,31 @@ var TimelineChart = function() {
         var zoom = d3.behavior.zoom().x(x).on('zoom', zoomed);
         var svg = d3.select(element).append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').call(zoom);
         svg.append('defs').append('clipPath').attr('id', 'chart-content').append('rect').attr('x', groupWidth).attr('y', 0).attr('height', height).attr('width', width - groupWidth);
-        svg.append('rect').attr('class', 'labels').attr('x', 0).attr('y', 0).attr('height', height).attr('width', groupWidth);
+        //svg.append('rect').attr('class', 'labels').attr('x', 0).attr('y', 0).attr('height', height).attr('width', groupWidth);
         svg.append('rect').attr('class', 'chart-bounds').attr('x', groupWidth).attr('y', 0).attr('height', height).attr('width', width - groupWidth);
-        svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + height + ')').call(xAxis);
         var groupHeight = height / data.length;
+        var rowBackgrounds = svg.selectAll('.row-bg').data(data).enter().append('rect').attr('class', 'row-bg')
+          .attr('id',function(d,i){
+            return "row-bg-"+d.label;
+          }).attr('width',width-groupWidth).attr("height",height/data.length).attr('x', groupWidth).attr('y', function(d, i) {
+            return groupHeight * i;
+        });
+        var groupBackgrounds = svg.selectAll('.group-label-bg').data(data).enter().append('rect').attr('class', 'group-label-bg')
+          .attr('id',function(d,i){
+            return "bg-"+d.label;
+          }).attr('width',groupWidth).attr("height",height/data.length).attr('x', 0).attr('y', function(d, i) {
+            return groupHeight * i;
+        });
+        svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + height + ')').call(xAxis);
+        var groupLabels = svg.selectAll('.group-label').data(data).enter().append('text').attr('class', 'group-label').attr('font-weight','bold').attr('fill','white').attr('width',36).attr('x', 0).attr('y', function(d, i) {
+            return groupHeight * i + groupHeight / 2 + 5.5;
+          }).attr('dx', '0.5em').attr('style','text-anchor: right;').text(function(d) {
+            return d.label;
+        });
         var groupSection = svg.selectAll('.group-section').data(data).enter().append('line').attr('class', 'group-section').attr('x1', 0).attr('x2', width).attr('y1', function(d, i) {
             return groupHeight * (i + 1);
         }).attr('y2', function(d, i) {
             return groupHeight * (i + 1);
-        });
-      var groupLabels = svg.selectAll('.group-label').data(data).enter().append('text').attr('class', '.group-label').attr('font-weight','bold').attr('fill','white').attr('width',36).attr('x', 0).attr('y', function(d, i) {
-            return groupHeight * i + groupHeight / 2 + 5.5;
-          }).attr('dx', '0.5em').attr('style','text-anchor: right;').text(function(d) {
-            return d.label;
         });
         var lineSection = svg.append('line').attr('x1', groupWidth).attr('x2', groupWidth).attr('y1', 0).attr('y2', height).attr('stroke', 'black');
         var groupIntervalItems = svg.selectAll('.item').data(data).enter().append('g').attr('clip-path', 'url(#chart-content)').attr('class', '.item').attr('transform', function(d, i) {
