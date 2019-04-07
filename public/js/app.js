@@ -82,7 +82,7 @@ $(document).ready(function(){
     context.close();
     context = new AudioContext();
     gainNode = context.createGain();
-    gainNode.gain.value = parseFloat(localStorage.gain) || 1.6;
+    gainNode.gain.value = parseFloat(localStorage.gain) || 4.8;
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
