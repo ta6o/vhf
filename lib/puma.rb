@@ -1,5 +1,5 @@
 #!/usr/bin/env puma
-application_path = '/var/www/playback'
+application_path = '/var/www/vhf'
 railsenv = 'production'
 directory application_path
 environment railsenv
