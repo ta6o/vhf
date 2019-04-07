@@ -297,7 +297,7 @@ $(document).ready(function(){
     $("#gain").html("");
     d3.select('#gain').call(
         sl = d3.slider()
-        .value(10 - (localStorage.gain / 1.6 || 1))
+        .value(10 - (localStorage.gain / 1.6 || 3))
         .orientation("vertical")
         .axis( d3.svg.axis().orient("right").ticks(10))
         .min(10).max(0).step(1)
