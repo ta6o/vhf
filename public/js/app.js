@@ -79,14 +79,16 @@ $(document).ready(function(){
   }
 
   function playSound(url) {
-    context.close();
+    if (context.state != "closed") {
+      context.close();
+    }
     context = new AudioContext();
     gainNode = context.createGain();
     gainNode.gain.value = parseFloat(localStorage.gain) || 4.8;
     var request = new XMLHttpRequest();
     request.open('GET', url, true);
     request.responseType = 'arraybuffer';
-    console.log(url)
+    //console.log(url)
 
     request.onload = function(x) {
       context.decodeAudioData(request.response, function(buffer) {
@@ -153,14 +155,15 @@ $(document).ready(function(){
 
   $("#chart").on("contextmenu","rect.interval",function(e){
     e.preventDefault();
+    fn = $(this).data("fn");
     ln = " "
-    ln += $(this).data("fn").split("_")[0]
+    ln += fn.split("_")[0]
     ln += " MHz on "
     a = String(new Date(parseInt($(this).data("fn").split("_")[1].split(".")[0]))).split(" ")
     a.splice(3,1)
     ln += [a[0]+",",a[1],a[2],a[3]].join(" ")
     ln += " LT <span>"+String($(this).data("d")/1000)+"s</span>"
-    ts = $(this).data("fn").split("_")[1].split(".")[0].substr(0,10)
+    ts = fn.split("_")[1].split(".")[0].substr(0,10)
     ln = ln.split(" on ")
     ago = Math.floor((new Date() - new Date(ts * 1000)) / (60 * 1000))
     days = Math.floor(ago / (60 * 24))
@@ -178,10 +181,12 @@ $(document).ready(function(){
     html += "Duration:<b>"+ln[1].split("LT")[1]+"</b><br/>"
     stopPlaying();
     $.getJSON("/loginfo/"+ts,function(data){
-        console.log(data)
-      html += "Recorded at: ";
-      html += " <b>"+dec2dms(data[1],false)+"</b>, ";
-      html += "<b>"+dec2dms(data[2],true)+"</b></p>"
+      if (data.length == 3) {
+        html += "Recorded at: ";
+        html += " <b>"+dec2dms(data[1],false)+"</b>, ";
+        html += "<b>"+dec2dms(data[2],true)+"</b><br/>"
+      }
+      html += "<br/><a class='btn blue' href='/txs/"+fn+"' download='"+fn+"'>DOWNLOAD</a> &nbsp; <a class='btn white grey-text' onclick='$(\"#modal\").modal(\"close\")'>CLOSE</a></p>"
       $(".modal .modal-content").html(html)
       $(".modal").modal("open")
     })
